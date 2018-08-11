@@ -1,0 +1,121 @@
+﻿<controls:MetroWindow x:Class="Browser.View.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:view="clr-namespace:Browser.View"
+        xmlns:dragablz="http://dragablz.net/winfx/xaml/dragablz"
+        xmlns:viewModel="clr-namespace:Browser.ViewModel"
+        xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"              
+        mc:Ignorable="d"
+        ShowTitleBar="False"
+        TitlebarHeight="30"
+        Height="700" Width="1000"
+        UseLayoutRounding="True"
+        Style="{StaticResource MainWindowStyle}">
+    <controls:MetroWindow.Resources>
+        <DataTemplate DataType="{x:Type viewModel:TabVm}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                
+                <view:TabControlPanel ScrollViewer.VerticalScrollBarVisibility="Disabled" 
+                                      Background="{StaticResource TabItem.Selected.Background}"
+                                      BorderThickness="0,0,0,1"
+                                      BorderBrush="SlateGray" 
+                />
+                <view:TabView Grid.Row="1" 
+                              Address="{Binding Address, Mode=TwoWay}"
+                              CachePath="{Binding Instance.CachePath}" 
+                              WebBrowser="{Binding WebBrowser, Mode=OneWayToSource}"
+                              NewWindowOpeningHandler="{Binding NewWindowOpeningHandler}" 
+                              Title="{Binding Title, Mode=OneWayToSource}" 
+                              IsNeedFileDialogCancel="{Binding Instance.IsNeedCancelFileDialog, Mode=OneWay}"
+                              UploadFilePaths="{Binding Instance.UploadFilePaths, Mode=OneWay}" />
+            </Grid>
+        </DataTemplate>
+    </controls:MetroWindow.Resources>
+    <controls:MetroWindow.InputBindings>
+        <KeyBinding Command="{Binding Instance.CloseActiveTabCommand}" Modifiers="Control" Key="W" />
+        <KeyBinding Command="{Binding Instance.NewTabCommand}" Modifiers="Control" Key="T" />
+        <KeyBinding Command="{Binding Instance.ActiveTab.WebBrowser.ReloadCommand}" Modifiers="Control" Key="F5" />
+        <KeyBinding Command="{Binding Instance.ActiveTab.WebBrowser.ReloadCommand}" Key="F5" />
+    </controls:MetroWindow.InputBindings>
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="PreviewKeyUp">
+            <i:InvokeCommandAction Command="{Binding Instance.ResetCommandsCanExecuteCommand}"/>
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+  <dragablz:TabablzControl AdjacentHeaderItemOffset="-10"
+                           AllowDrop="True"
+                        ConsolidateOrphanedItems="True"
+                        ClosingItemCallback="{Binding Instance.ClosingTabItemHandler}"
+                        Margin="0,10,0,0"
+                        NewItemFactory="{Binding Instance.Factory}"
+                        HeaderMemberPath="Title"
+                        ItemsSource="{Binding Instance.Tabs}"
+                        ItemContainerStyle="{StaticResource TrapezoidDragableTabItemStyle}" 
+                        SelectedItem="{Binding Instance.ActiveTab}"
+                        ShowDefaultAddButton="True"
+                        ShowDefaultCloseButton="True">
+      <dragablz:TabablzControl.HeaderSuffixContent>
+            <Border Width="100" />
+        </dragablz:TabablzControl.HeaderSuffixContent>
+    </dragablz:TabablzControl>
+
+    <!--<Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Border ClipToBounds="True" Grid.Row="0">
+            <dragablz:TabablzControl x:Name="TabControlAbove"
+                                     AdjacentHeaderItemOffset="-10"
+                                     AllowDrop="True"
+                                     ConsolidateOrphanedItems="True"
+                                     ClosingItemCallback="{Binding Instance.ClosingTabItemHandler}"
+                                     Margin="0,10,0,0"
+                                     NewItemFactory="{Binding Instance.Factory}"
+                                     HeaderMemberPath="Title"
+                                     ItemsSource="{Binding Instance.Tabs}"
+                                     ItemContainerStyle="{StaticResource TrapezoidDragableTabItemStyle}" 
+                                     SelectedItem="{Binding Instance.ActiveTab}"
+                                     ShowDefaultAddButton="True"
+                                     ShowDefaultCloseButton="True">
+                <dragablz:TabablzControl.ContentTemplate>
+                    <DataTemplate/>
+                </dragablz:TabablzControl.ContentTemplate>
+                <dragablz:TabablzControl.HeaderSuffixContent>
+                    <Border Width="100" />
+                </dragablz:TabablzControl.HeaderSuffixContent>
+            </dragablz:TabablzControl>
+        </Border>
+        <ListBox ItemsSource="{Binding Instance.Tabs}" Grid.Row="1" BorderThickness="0"
+                 SelectedItem="{Binding SelectedItem, ElementName=TabControlAbove}"
+                 ItemTemplate="{StaticResource TabVmDataTemplate}">
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="ListBoxItem">
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="ListBoxItem">
+                                <ContentPresenter/>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                    <Setter
+                        Property="Visibility"
+                        Value="{Binding IsSelected, RelativeSource={RelativeSource Self},
+                                   Converter={StaticResource B2V}}"/>
+                </Style>
+            </ListBox.ItemContainerStyle>
+            <ListBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Grid/>
+                </ItemsPanelTemplate>
+            </ListBox.ItemsPanel>
+        </ListBox>
+    </Grid>-->
+</controls:MetroWindow>
